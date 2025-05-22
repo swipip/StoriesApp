@@ -3,6 +3,7 @@ import SwiftUI
 struct InteractionsView: View {
 
     @State private var editingText = ""
+    @Binding var liked: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -17,10 +18,8 @@ struct InteractionsView: View {
                         .shadow(radius: 6)
                 }
 
-            Button {
+            LikeButton(liked: $liked) {
                 // ..
-            } label: {
-                Image(systemName: "heart")
             }
 
             Button {
@@ -35,7 +34,10 @@ struct InteractionsView: View {
 }
 
 #Preview {
-    InteractionsView()
+
+    @Previewable @State var liked: Bool = false
+
+    InteractionsView(liked: $liked)
         .padding()
         .background(.black)
 }
