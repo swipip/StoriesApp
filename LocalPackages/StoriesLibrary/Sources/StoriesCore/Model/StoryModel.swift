@@ -1,6 +1,6 @@
 import Foundation
 
-package struct StoryModel: Sendable {
+package struct StoryModel: Sendable, Codable {
     package let id: UUID
     package let user: UserModel
     package let index: Int

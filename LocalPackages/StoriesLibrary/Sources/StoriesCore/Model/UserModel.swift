@@ -1,6 +1,6 @@
 import Foundation
 
-package struct UserModel: Identifiable, Sendable {
+package struct UserModel: Identifiable, Sendable, Codable {
     package let id: UUID
     package let username: String
     package let profileImageURL: URL?
