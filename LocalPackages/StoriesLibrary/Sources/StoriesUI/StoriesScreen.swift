@@ -1,8 +1,22 @@
-//
-//  File.swift
-//  StoriesLibrary
-//
-//  Created by Gautier BILLARD on 22/05/2025.
-//
+import SwiftUI
 
-import Foundation
+package struct StoriesScreen: View {
+
+    @StateObject private var viewModel = StoriesScreenViewModel()
+
+    package var body: some View {
+        Scroll3DView(selectedItem: $viewModel.selectedStory, items: viewModel.stories) { story in
+            StoryCellView(story: story)
+                .containerRelativeFrame(.horizontal)
+                .overlay {
+                    Text("\(story.index)")
+                }
+        }
+        .background(.black)
+    }
+
+}
+
+#Preview {
+    StoriesScreen()
+}
