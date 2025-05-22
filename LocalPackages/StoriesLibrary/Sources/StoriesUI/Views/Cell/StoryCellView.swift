@@ -30,11 +30,6 @@ struct StoryCellView: View {
                 })
                 .containerRelativeFrame(.horizontal)
                 .id(page)
-                .overlay(alignment: .bottom) {
-                    Text("\(page.index)")
-                        .font(.title2)
-                        .padding()
-                }
             } prefetch: { prefetchingItems in
                 await prefetchAssets(for: prefetchingItems)
             }
