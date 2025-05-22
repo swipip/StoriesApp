@@ -45,5 +45,6 @@ struct StoriesListCell: View {
 #Preview {
     StoriesListCell(story: StoryViewData(id: UUID(), index: 0, user: UserViewData(id: UUID(), name: "", avatarURL: nil, isApproved: true, communication: nil, postedSince: ""), pages: [])) {
         // ..
-    }.environmentObject(AssetLoader())
+    }
+    .environmentObject(AssetLoader.shared)
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 package struct StoriesScreen: View {
 
-    @StateObject private var assetLoader = AssetLoader()
+    @StateObject private var assetLoader = AssetLoader.shared
     @StateObject private var viewModel: StoriesScreenViewModel
 
     private let onFinishedWatching: () -> Void

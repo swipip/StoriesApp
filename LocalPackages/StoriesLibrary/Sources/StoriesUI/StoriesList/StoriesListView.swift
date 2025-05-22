@@ -2,7 +2,7 @@ import SwiftUI
 
 package struct StoriesListView: View {
 
-    @StateObject private var assetLoader = AssetLoader()
+    @StateObject private var assetLoader = AssetLoader.shared
     @StateObject private var viewModel: StoriesListViewModel
 
     private let handler: (_ storyId: UUID) -> Void
