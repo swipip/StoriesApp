@@ -139,11 +139,7 @@ private actor MockService {
     private func randomUserUrl() -> URL {
         let type = ["men", "women"].randomElement() ?? "men"
         let index = (0 ..< 99).randomElement() ?? 1
-
-        let url =  URL(string: "https://randomuser.me/api/portraits/\(type)/\(index).jpg")!
-        print(url)
-
-        return url
+        return URL(string: "https://randomuser.me/api/portraits/\(type)/\(index).jpg")!
     }
 }
 
