@@ -11,6 +11,8 @@ public struct StoriesScreen: View {
     }
 
     public var body: some View {
-        StoriesUI.StoriesScreen(provider: provider)
+        StoriesUI.StoriesScreen(provider: provider) {
+            // dismiss when presented
+        }
     }
 }

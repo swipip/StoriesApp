@@ -2,7 +2,14 @@ import SwiftUI
 
 struct StoryCellView: View {
 
+    enum Action {
+        case close
+        case finishedWatching
+        case requestPrevious
+    }
+
     let story: StoryViewData
+    let handler: (Action) -> Void
 
     @EnvironmentObject private var assetLoader: AssetLoader
 
@@ -40,9 +47,9 @@ struct StoryCellView: View {
                 guard !paused else { return }
                 switch action {
                     case .requestPrevious:
-                        break
+                        handler(.requestPrevious)
                     case .finishedWatching:
-                        break
+                        handler(.finishedWatching)
                 }
             }
         }
@@ -53,7 +60,7 @@ struct StoryCellView: View {
                 }
                 .padding(8)
                 UserView(user: story.user) {
-                    // handle dismiss and other interactions
+                    handler(.close)
                 }
                 .padding(8)
             }
@@ -99,5 +106,7 @@ extension StoryPageViewData: StoryTimeLineDisplayable, Indexable {
             StoryPageViewData(id: UUID(), index: 0, asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "www.google.com")!), displayDuration: 4, liked: false),
             StoryPageViewData(id: UUID(), index: 0, asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "www.google.com")!), displayDuration: 4, liked: false)
         ])
-    )
+    ) { _ in
+        // ..
+    }
 }

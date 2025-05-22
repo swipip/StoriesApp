@@ -21,4 +21,21 @@ final class StoriesScreenViewModel: ObservableObject {
             // Handle error
         }
     }
+
+    func selectNextStory(_ onEndReached: () -> Void) {
+        guard selectedStory != stories.last else {
+            onEndReached()
+            return
+        }
+        guard let currentIndex = selectedStory?.index else { return }
+
+        let storiesCount = stories.count
+
+        selectedStory = stories[min(currentIndex + 1, storiesCount - 1)]
+    }
+
+    func selectPreviousStory() {
+        guard let currentIndex = selectedStory?.index else { return }
+        selectedStory = stories[max(currentIndex - 1, 0)]
+    }
 }
