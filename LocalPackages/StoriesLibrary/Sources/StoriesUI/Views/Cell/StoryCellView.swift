@@ -4,23 +4,26 @@ struct StoryCellView: View {
 
     let story: StoryViewData
 
+    @EnvironmentObject private var assetLoader: AssetLoader
+
     @State private var hideAccessories: Bool = false
     @State private var paused: Bool = false
     @State private var selectedPage: StoryPageViewData?
 
     var body: some View {
         VStack(spacing: .zero) {
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: .zero) {
-                    ForEach(story.pages) { page in
-                        StoryPageCellView(page: page)
-                            .containerRelativeFrame(.horizontal)
-                            .id(page)
+            PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: story.pages, selectedItem: $selectedPage) { page in
+                StoryPageCellView(page: page)
+                    .containerRelativeFrame(.horizontal)
+                    .id(page)
+                    .overlay(alignment: .bottom) {
+                        Text("\(page.index)")
+                            .font(.title2)
+                            .padding()
                     }
-                }
-                .scrollTargetLayout()
+            } prefetch: { prefetchingItems in
+                await prefetchAssets(for: prefetchingItems)
             }
-            .scrollPosition(id: $selectedPage)
             .scrollDisabled(true)
 
             InteractionsView()
@@ -58,6 +61,14 @@ struct StoryCellView: View {
         .environment(\.paused, paused)
         .onAppear {
             selectedPage = story.pages.first
+        }
+    }
+
+    private func prefetchAssets(for items: [StoryPageViewData]) async {
+        do {
+            try await assetLoader.preloadAssets(for: items.map(\.asset))
+        } catch {
+            // ..
         }
     }
 }
