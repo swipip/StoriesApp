@@ -5,6 +5,8 @@ package extension StoriesService {
     static var mock: StoriesService {
         StoriesService {
             await MockService.shared.loadStories()
+        } storiesPageFetcher: { pageIndex in
+            try await MockService.shared.loadAdditionalStories(pageIndex: pageIndex)
         } setStoryPageLiked: { storyId, pageId, liked in
             try await MockService.shared.setStoryLiked(storyId: storyId, pageId: pageId, liked: liked)
         }
@@ -31,7 +33,7 @@ private actor MockService {
         self.persistentStore = persistentStore
     }
 
-    func setStoryLiked(storyId: UUID, pageId: UUID, liked: Bool) async throws(ServiceError) -> StoryModel {
+    func setStoryLiked(storyId: UUID, pageId: UUID, liked: Bool) async throws(ServiceError) {
         guard let story = cachedStories[storyId], let page = story.pages[pageId] else {
             throw .serverError
         }
@@ -59,8 +61,13 @@ private actor MockService {
 
         cachedStories[story.index] = newStory
         storeStories()
+    }
 
-        return newStory
+    func loadAdditionalStories(pageIndex _: Int) async -> [StoryModel] {
+        let additionalStories = getSampleStories()
+        cachedStories += additionalStories
+        storeStories()
+        return cachedStories
     }
 
     func loadStories() async -> [StoryModel] {
@@ -68,27 +75,31 @@ private actor MockService {
             cachedStories = storedStories
             return cachedStories
         } else {
-            var stories = [StoryModel]()
-            let numberOfStories = Int.random(in: 3 ... 8)
-            for index in 0 ..< numberOfStories {
-                var pages = [PageModel]()
+            cachedStories = getSampleStories()
+            storeStories()
+            return cachedStories
+        }
+    }
 
-                let numberOfPages = Int.random(in: 1 ... 10)
-                let user = randomUser(index: index)
+    private func getSampleStories() -> [StoryModel] {
+        var stories = [StoryModel]()
+        let currentNumberOfStories = cachedStories.count
+        let numberOfStories = currentNumberOfStories + 10
+        for index in currentNumberOfStories ..< numberOfStories {
+            var pages = [PageModel]()
 
-                for pageIndex in 0 ..< numberOfPages {
-                    let asset = AssetModel(id: UUID(), mediaUrl: randomUrl())
-                    pages.append(PageModel(id: UUID(), index: pageIndex, asset: asset, displayDuration: 10, liked: false, viewed: true))
-                }
+            let numberOfPages = Int.random(in: 1 ... 10)
+            let user = randomUser(index: index)
 
-                stories.append(StoryModel(id: UUID(), user: user, index: index, viewed: false, postedAt: .distantPast, pages: pages))
+            for pageIndex in 0 ..< numberOfPages {
+                let asset = AssetModel(id: UUID(), mediaUrl: randomUrl())
+                pages.append(PageModel(id: UUID(), index: pageIndex, asset: asset, displayDuration: 10, liked: false, viewed: true))
             }
 
-            cachedStories = stories
-            storeStories()
-
-            return stories
+            stories.append(StoryModel(id: UUID(), user: user, index: index, viewed: false, postedAt: .distantPast, pages: pages))
         }
+
+        return stories
     }
 
     private func storeStories() {

@@ -31,4 +31,12 @@ package actor StoriesRepository {
             throw .serverError
         }
     }
+
+    package func loadAdditionalStories(index: Int) async throws(RepositoryError) -> [StoryModel] {
+        do {
+            return try await service.storiesPageFetcher(index)
+        } catch {
+            throw .serverError
+        }
+    }
 }

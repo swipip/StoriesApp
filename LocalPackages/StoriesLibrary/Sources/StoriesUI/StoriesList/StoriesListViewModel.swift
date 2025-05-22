@@ -6,9 +6,11 @@ final class StoriesListViewModel: ObservableObject {
     @Published var selectedStory: StoryViewData?
     @Published private(set) var stories: [StoryViewData] = []
 
-    private weak var provider: (any StoriesProvider)?
+    private weak var provider: (any StoriesProvider & StoriesListProvider)?
 
-    init(provider: some StoriesProvider) {
+    private var currentPage: Int = 0
+
+    init(provider: some StoriesProvider & StoriesListProvider) {
         self.provider = provider
     }
 
@@ -21,4 +23,12 @@ final class StoriesListViewModel: ObservableObject {
         }
     }
 
+    func loadNextPage() async {
+        guard let provider else { return }
+        do {
+            stories = try await provider.loadPage(index: currentPage + 1)
+        } catch {
+            // ..
+        }
+    }
 }

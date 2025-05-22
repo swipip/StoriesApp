@@ -3,9 +3,13 @@ import SwiftUI
 struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Content: View>: View {
 
     enum PrefetchPolicy: Int {
+        case conservative = 2
         case regular = 5
         case aggressive = 10
     }
+
+    @Environment(\.willReachListEnd)
+    private var willReachListEnd: () async -> Void
 
     @ObservedObject
     private var viewModel: PrefetchScrollViewModel<T>
@@ -40,6 +44,7 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
                         .id(item)
                         .task {
                             await prefetch(currentItem: item)
+                            callWillReachEndIfNeeded(currentItem: item)
                         }
                 }
                 progressView
@@ -79,6 +84,12 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
     private func prefetch(currentItem: T) async {
         let range = viewModel.prefetchRange(currentItem: currentItem)
         await prefetch(range)
+    }
+
+    private func callWillReachEndIfNeeded(currentItem: T) {
+        viewModel.callWillReachEndIfNeeded(currentItem: currentItem) {
+            await willReachListEnd()
+        }
     }
 }
 

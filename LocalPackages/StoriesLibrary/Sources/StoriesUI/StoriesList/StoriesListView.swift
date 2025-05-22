@@ -7,18 +7,21 @@ package struct StoriesListView: View {
 
     private let handler: (_ storyId: UUID) -> Void
 
-    package init(provider: some StoriesProvider, handler: @escaping (_ storyId: UUID) -> Void) {
+    package init(provider: some StoriesProvider & StoriesListProvider, handler: @escaping (_ storyId: UUID) -> Void) {
         _viewModel = .init(wrappedValue: StoriesListViewModel(provider: provider))
         self.handler = handler
     }
 
     package var body: some View {
-        PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: viewModel.stories, selectedItem: $viewModel.selectedStory) { item in
+        PrefetchScrollView(axis: .horizontal, policy: .conservative, model: viewModel.stories, selectedItem: $viewModel.selectedStory) { item in
             StoriesListCell(story: item) {
                 handler(item.id)
             }
         } prefetch: { prefetchingRange in
             await prefetchStories(prefetchingRange)
+        }
+        .onListWillReachEnd {
+            await viewModel.loadNextPage()
         }
         .environmentObject(assetLoader)
         .task {
@@ -41,7 +44,7 @@ package struct StoriesListView: View {
     @MainActor
     struct Previewer: View {
 
-        final class Provider: StoriesProvider {
+        final class Provider: StoriesProvider, StoriesListProvider {
 
             private let media = StoryPageAsset(id: UUID(), mediaUrl: URL(string: "https://picsum.photos/200")!)
             private let user = UserViewData(
@@ -81,6 +84,10 @@ package struct StoriesListView: View {
                         StoryPageViewData(id: UUID(), index: 0, asset: media, displayDuration: 8, liked: false),
                     ])
                 ]
+            }
+
+            func loadPage(index: Int) async throws -> [StoryViewData] {
+                []
             }
         }
 
