@@ -8,15 +8,22 @@ final class StoriesScreenViewModel: ObservableObject {
 
     private weak var provider: (any StoriesProvider)?
 
-    init(provider: some StoriesProvider) {
+    private let selectedStoryId: UUID?
+
+    init(provider: some StoriesProvider, selectedStoryId: UUID?) {
         self.provider = provider
+        self.selectedStoryId = selectedStoryId
     }
 
     func load() async {
         do {
             let stories = try await provider?.loadStories()
             self.stories = stories ?? []
-            self.selectedStory = stories?.first
+            if let selectedStoryId, let matchingStory = stories?.first(where: { $0.id == selectedStoryId}) {
+                self.selectedStory = matchingStory
+            } else {
+                self.selectedStory = stories?.first
+            }
         } catch {
             // Handle error
         }

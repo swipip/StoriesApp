@@ -4,15 +4,18 @@ import StoriesCore
 
 public struct StoriesScreen: View {
 
-    private let provider = StoriesRepository(service: .mock)
+    @Environment(\.dismiss) private var dismissAction
 
-    public init() {
-        // ..
+    private let provider = StoriesRepository(service: .mock)
+    private let story: SelectedStory?
+
+    public init(story: SelectedStory?) {
+        self.story = story
     }
 
     public var body: some View {
-        StoriesUI.StoriesScreen(provider: provider) {
-            // dismiss when presented
+        StoriesUI.StoriesScreen(provider: provider, selectedStoryId: story?.id) {
+            dismissAction()
         }
     }
 }

@@ -2,13 +2,13 @@ import SwiftUI
 
 package struct StoriesScreen: View {
 
-    @StateObject private var assetLoader = AssetLoader()
+    @StateObject private var assetLoader = AssetLoader.shared
     @StateObject private var viewModel: StoriesScreenViewModel
 
     private let onFinishedWatching: () -> Void
 
-    package init(provider: some StoriesProvider, onFinishedWatching: @escaping () -> Void) {
-        _viewModel = .init(wrappedValue: StoriesScreenViewModel(provider: provider))
+    package init(provider: some StoriesProvider, selectedStoryId: UUID? = nil, onFinishedWatching: @escaping () -> Void) {
+        _viewModel = .init(wrappedValue: StoriesScreenViewModel(provider: provider, selectedStoryId: selectedStoryId))
         self.onFinishedWatching = onFinishedWatching
     }
 

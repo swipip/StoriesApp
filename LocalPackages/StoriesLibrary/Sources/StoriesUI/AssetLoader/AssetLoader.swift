@@ -4,6 +4,12 @@ actor AssetLoader: ObservableObject {
 
     private var loadedAssets = NSCache<NSString, CacheEntryObject>()
 
+    static let shared = AssetLoader()
+
+    private init() {
+        // ..
+    }
+
     final private class CacheEntryObject {
         let entry: State
         init(entry: State) {
