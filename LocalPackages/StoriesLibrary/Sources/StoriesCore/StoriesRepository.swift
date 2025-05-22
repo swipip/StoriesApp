@@ -16,7 +16,12 @@ package actor StoriesRepository {
     // MARK: API
 
     package func getStories() async throws(RepositoryError) -> [StoryModel] {
-        []
+        do {
+            cachedStories = try await service.storiesFetcher()
+            return cachedStories
+        } catch {
+            throw .serverError
+        }
     }
 
     package func updateStoryLiked(liked: Bool, storyId: UUID, pageId: UUID) async throws(RepositoryError) {
