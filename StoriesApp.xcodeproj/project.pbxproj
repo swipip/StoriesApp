@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A0F58BA52DDF3D8E00F5518B /* Stories in Frameworks */ = {isa = PBXBuildFile; productRef = A0F58BA42DDF3D8E00F5518B /* Stories */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		A0F58B7B2DDF3C2400F5518B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0F58BA52DDF3D8E00F5518B /* Stories in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = StoriesApp;
 			packageProductDependencies = (
+				A0F58BA42DDF3D8E00F5518B /* Stories */,
 			);
 			productName = StoriesApp;
 			productReference = A0F58B6D2DDF3C2200F5518B /* StoriesApp.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = A0F58B642DDF3C2200F5518B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A0F58BA32DDF3D8E00F5518B /* XCLocalSwiftPackageReference "LocalPackages/StoriesLibrary" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A0F58B6E2DDF3C2200F5518B /* Products */;
 			projectDirPath = "";
@@ -405,6 +414,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -433,6 +443,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,6 +569,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A0F58BA32DDF3D8E00F5518B /* XCLocalSwiftPackageReference "LocalPackages/StoriesLibrary" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = LocalPackages/StoriesLibrary;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A0F58BA42DDF3D8E00F5518B /* Stories */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Stories;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A0F58B652DDF3C2200F5518B /* Project object */;
 }
