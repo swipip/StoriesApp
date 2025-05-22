@@ -48,7 +48,7 @@ struct StoryCellView: View {
             .overlay(alignment: .top) {
                 VStack(spacing: .zero) {
                     StoriesVisualTimerView(selectedItem: $selectedPage, model: stateFullPages) {
-                        // ..
+                        handler(.finishedWatching)
                     }
                     .padding(8)
                     UserView(user: story.user) {
