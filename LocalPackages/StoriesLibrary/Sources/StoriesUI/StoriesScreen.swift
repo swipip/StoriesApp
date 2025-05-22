@@ -2,17 +2,16 @@ import SwiftUI
 
 package struct StoriesScreen: View {
 
-    package var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: .zero) {
-                Color
-                    .blue
-                    .containerRelativeFrame(.horizontal)
+    @StateObject private var viewModel = StoriesScreenViewModel()
 
-                Color
-                    .green
-                    .containerRelativeFrame(.horizontal)
-            }
+    package var body: some View {
+        Scroll3DView(selectedItem: $viewModel.selectedStory, items: viewModel.stories) { story in
+            Color
+                .blue
+                .containerRelativeFrame(.horizontal)
+                .overlay {
+                    Text("\(story.index)")
+                }
         }
     }
 
