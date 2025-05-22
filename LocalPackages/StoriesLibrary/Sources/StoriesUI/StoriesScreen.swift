@@ -5,13 +5,16 @@ package struct StoriesScreen: View {
     @StateObject private var assetLoader = AssetLoader()
     @StateObject private var viewModel: StoriesScreenViewModel
 
-    package init(provider: some StoriesProvider) {
+    private let onFinishedWatching: () -> Void
+
+    package init(provider: some StoriesProvider, onFinishedWatching: @escaping () -> Void) {
         _viewModel = .init(wrappedValue: StoriesScreenViewModel(provider: provider))
+        self.onFinishedWatching = onFinishedWatching
     }
 
     package var body: some View {
         Scroll3DView(selectedItem: $viewModel.selectedStory, items: viewModel.stories) { story in
-            StoryCellView(story: story)
+            StoryCellView(story: story, handler: handleStoryCellAction(_:))
         } prefetch: { prefetchItems in
             await prefetchStories(prefetchItems)
         }
@@ -19,6 +22,23 @@ package struct StoriesScreen: View {
         .environmentObject(assetLoader)
         .task {
             await viewModel.load()
+        }
+    }
+
+    private func handleStoryCellAction(_ action: StoryCellView.Action) {
+        switch action {
+            case .finishedWatching:
+                withAnimation {
+                    viewModel.selectNextStory {
+                        onFinishedWatching()
+                    }
+                }
+            case .requestPrevious:
+                withAnimation {
+                    viewModel.selectPreviousStory()
+                }
+            case .close:
+                onFinishedWatching()
         }
     }
 
@@ -74,7 +94,9 @@ extension StoryViewData: Indexable {
         private let provider = Provider()
 
         var body: some View {
-            StoriesScreen(provider: provider)
+            StoriesScreen(provider: provider) {
+                // ..
+            }
         }
     }
 

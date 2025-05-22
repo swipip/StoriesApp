@@ -2,13 +2,21 @@ import SwiftUI
 
 struct StoryCellView: View {
 
+    enum Action {
+        case close
+        case finishedWatching
+        case requestPrevious
+    }
+
     let story: StoryViewData
+    let handler: (Action) -> Void
 
     @EnvironmentObject private var assetLoader: AssetLoader
 
     @State private var hideAccessories: Bool = false
     @State private var paused: Bool = false
     @State private var selectedPage: StoryPageViewData?
+    @State private var like: Bool = false
 
     var body: some View {
         VStack(spacing: .zero) {
@@ -29,35 +37,35 @@ struct StoryCellView: View {
                 await prefetchAssets(for: prefetchingItems)
             }
             .scrollDisabled(true)
+            .overlay {
+                PagesSelectionButtonsOverlayView(pages: story.pages, selectedPage: $selectedPage) { action in
+                    guard !paused else { return }
+                    switch action {
+                        case .requestPrevious:
+                            handler(.requestPrevious)
+                        case .finishedWatching:
+                            handler(.finishedWatching)
+                    }
+                }
+            }
+            .overlay(alignment: .top) {
+                VStack(spacing: .zero) {
+                    StoriesVisualTimerView(selectedItem: $selectedPage, model: story.pages) {
+                        // ..
+                    }
+                    .padding(8)
+                    UserView(user: story.user) {
+                        handler(.close)
+                    }
+                    .padding(8)
+                }
+                .opacity(hideAccessories ? 0 : 1)
+            }
 
-            InteractionsView()
+            InteractionsView(liked: $like)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .opacity(hideAccessories ? 0 : 1)
-        }
-        .overlay {
-            PagesSelectionButtonsOverlayView(pages: story.pages, selectedPage: $selectedPage) { action in
-                guard !paused else { return }
-                switch action {
-                    case .requestPrevious:
-                        break
-                    case .finishedWatching:
-                        break
-                }
-            }
-        }
-        .overlay(alignment: .top) {
-            VStack(spacing: .zero) {
-                StoriesVisualTimerView(selectedItem: $selectedPage, model: story.pages) {
-                    // ..
-                }
-                .padding(8)
-                UserView(user: story.user) {
-                    // handle dismiss and other interactions
-                }
-                .padding(8)
-            }
-            .opacity(hideAccessories ? 0 : 1)
         }
         .background(.black)
         .animation(hideAccessories ? .snappy(duration: 0.2) : .smooth, value: hideAccessories)
@@ -99,5 +107,7 @@ extension StoryPageViewData: StoryTimeLineDisplayable, Indexable {
             StoryPageViewData(id: UUID(), index: 0, asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "www.google.com")!), displayDuration: 4, liked: false),
             StoryPageViewData(id: UUID(), index: 0, asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "www.google.com")!), displayDuration: 4, liked: false)
         ])
-    )
+    ) { _ in
+        // ..
+    }
 }
