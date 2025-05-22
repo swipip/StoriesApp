@@ -2,6 +2,7 @@ import SwiftUI
 
 package struct StoriesScreen: View {
 
+    @StateObject private var assetLoader = AssetLoader()
     @StateObject private var viewModel: StoriesScreenViewModel
 
     package init(provider: some StoriesProvider) {
@@ -11,13 +12,28 @@ package struct StoriesScreen: View {
     package var body: some View {
         Scroll3DView(selectedItem: $viewModel.selectedStory, items: viewModel.stories) { story in
             StoryCellView(story: story)
+        } prefetch: { prefetchItems in
+            await prefetchStories(prefetchItems)
         }
         .background(.black)
+        .environmentObject(assetLoader)
         .task {
             await viewModel.load()
         }
     }
 
+    private func prefetchStories(_ prefetchItems: [StoryViewData]) async {
+        let assets = prefetchItems.flatMap(\.pages).map(\.asset)
+        do {
+            try await assetLoader.preloadAssets(for: assets)
+        } catch {
+            // ..
+        }
+    }
+}
+
+extension StoryViewData: Indexable {
+    // ..
 }
 
 #Preview {
