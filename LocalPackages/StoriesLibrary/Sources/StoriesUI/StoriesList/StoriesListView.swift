@@ -13,7 +13,8 @@ package struct StoriesListView: View {
     }
 
     package var body: some View {
-        PrefetchScrollView(axis: .horizontal, policy: .conservative, model: viewModel.stories, selectedItem: $viewModel.selectedStory) { item in
+        
+        PrefetchScrollView(axis: .horizontal, policy: .conservative, pagingBehavior: false, model: viewModel.stories, selectedItem: $viewModel.selectedStory) { item in
             StoriesListCell(story: item) {
                 handler(item.id)
             }

@@ -18,17 +18,20 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
     private var selectedItem: T?
 
     private let axis: Axis.Set
+    private let pagingBehavior: Bool
     private let content: (T) -> Content
     private let prefetch: @Sendable ([T]) async -> Void
 
     init(axis: Axis.Set,
          policy: PrefetchPolicy,
+         pagingBehavior: Bool = true,
          model: [T],
          selectedItem: Binding<T?>,
          content: @escaping (T) -> Content,
          prefetch: @Sendable @escaping ([T]) async -> Void) {
 
         self.axis = axis
+        self.pagingBehavior = pagingBehavior
         self.content = content
         self.prefetch = prefetch
         self.viewModel = PrefetchScrollViewModel(model: model, prefetchCount: policy.rawValue)
@@ -37,6 +40,17 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
     }
 
     var body: some View {
+        if pagingBehavior {
+            scrollView
+                .scrollTargetBehavior(.paging)
+                .scrollPosition(id: $selectedItem)
+        } else {
+            scrollView
+                .scrollPosition(id: $selectedItem)
+        }
+    }
+
+    private var scrollView: some View {
         ScrollView(axis, showsIndicators: false) {
             layout {
                 ForEach(viewModel.model) { item in
@@ -50,8 +64,6 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
                 progressView
             }
         }
-        .scrollTargetBehavior(.paging)
-        .scrollPosition(id: $selectedItem)
     }
 
     @ViewBuilder
