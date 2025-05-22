@@ -13,14 +13,18 @@ struct StoryCellView: View {
     var body: some View {
         VStack(spacing: .zero) {
             PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: story.pages, selectedItem: $selectedPage) { page in
-                StoryPageCellView(page: page)
-                    .containerRelativeFrame(.horizontal)
-                    .id(page)
-                    .overlay(alignment: .bottom) {
-                        Text("\(page.index)")
-                            .font(.title2)
-                            .padding()
+                StoryPageCellView(page: page, onReady: {
+                    if selectedPage == nil {
+                        selectedPage = page
                     }
+                })
+                .containerRelativeFrame(.horizontal)
+                .id(page)
+                .overlay(alignment: .bottom) {
+                    Text("\(page.index)")
+                        .font(.title2)
+                        .padding()
+                }
             } prefetch: { prefetchingItems in
                 await prefetchAssets(for: prefetchingItems)
             }
@@ -59,9 +63,6 @@ struct StoryCellView: View {
         .animation(hideAccessories ? .snappy(duration: 0.2) : .smooth, value: hideAccessories)
         .onExtraLongPress(limit: 0.5, pressed: $paused, extraLongPressed: $hideAccessories)
         .environment(\.paused, paused)
-        .onAppear {
-            selectedPage = story.pages.first
-        }
     }
 
     private func prefetchAssets(for items: [StoryPageViewData]) async {

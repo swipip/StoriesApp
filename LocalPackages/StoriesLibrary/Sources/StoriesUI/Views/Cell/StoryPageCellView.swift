@@ -6,6 +6,7 @@ struct StoryPageCellView: View {
     @State private var image: Image?
 
     let page: StoryPageViewData
+    let onReady: () -> Void
 
     var body: some View {
         GeometryReader { geometryProxy in
@@ -31,6 +32,7 @@ struct StoryPageCellView: View {
         .task {
             do {
                 image = try await assetLoader.loadAsset(for: page.asset)
+                onReady()
             } catch {
                 // ..
             }
@@ -40,10 +42,14 @@ struct StoryPageCellView: View {
 }
 
 #Preview {
-    StoryPageCellView(page: StoryPageViewData(
-        id: UUID(),
-        index: 0,
-        asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "https://picsum.photos/200")!),
-        displayDuration: 8,
-        liked: false))
+    StoryPageCellView(
+        page: StoryPageViewData(
+            id: UUID(),
+            index: 0,
+            asset: StoryPageAsset(id: UUID(), mediaUrl: URL(string: "https://picsum.photos/200")!),
+            displayDuration: 8,
+            liked: false)
+    ) {
+        // ..
+    }
 }
