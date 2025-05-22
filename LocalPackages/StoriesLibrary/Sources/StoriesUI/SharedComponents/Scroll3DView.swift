@@ -47,7 +47,3 @@ struct Scroll3DView<T: Hashable & Identifiable & Sendable, Content: View>: View 
         }
     }
 }
-
-extension EnvironmentValues {
-    @Entry var paused: Bool = false
-}

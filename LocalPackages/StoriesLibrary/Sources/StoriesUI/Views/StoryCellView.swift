@@ -4,6 +4,8 @@ struct StoryCellView: View {
 
     let story: StoryViewData
 
+    @State private var hideAccessories: Bool = false
+    @State private var paused: Bool = false
     @State private var selectedPage: StoryPageViewData?
 
     var body: some View {
@@ -13,9 +15,12 @@ struct StoryCellView: View {
                 .overlay {
                     Text("page \(selectedPage?.index ?? -1)")
                 }
+                .onExtraLongPress(limit: 0.5, pressed: $paused, extraLongPressed: $hideAccessories)
+
             InteractionsView()
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
+                .opacity(hideAccessories ? 0 : 1)
         }
         .overlay(alignment: .top) {
             VStack(spacing: .zero) {
@@ -28,12 +33,19 @@ struct StoryCellView: View {
                 }
                 .padding(8)
             }
+            .opacity(hideAccessories ? 0 : 1)
         }
         .background(.black)
+        .animation(hideAccessories ? .snappy(duration: 0.2) : .smooth, value: hideAccessories)
+        .environment(\.paused, paused)
         .onAppear {
             selectedPage = story.pages.first
         }
     }
+}
+
+extension EnvironmentValues {
+    @Entry var paused: Bool = false
 }
 
 extension StoryPageViewData: StoryTimeLineDisplayable {
