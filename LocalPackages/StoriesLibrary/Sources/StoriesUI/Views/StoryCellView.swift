@@ -15,12 +15,22 @@ struct StoryCellView: View {
                 .overlay {
                     Text("page \(selectedPage?.index ?? -1)")
                 }
-                .onExtraLongPress(limit: 0.5, pressed: $paused, extraLongPressed: $hideAccessories)
 
             InteractionsView()
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .opacity(hideAccessories ? 0 : 1)
+        }
+        .overlay {
+            PagesSelectionButtonsOverlayView(pages: story.pages, selectedPage: $selectedPage) { action in
+                guard !paused else { return }
+                switch action {
+                    case .requestPrevious:
+                        break
+                    case .finishedWatching:
+                        break
+                }
+            }
         }
         .overlay(alignment: .top) {
             VStack(spacing: .zero) {
@@ -37,6 +47,7 @@ struct StoryCellView: View {
         }
         .background(.black)
         .animation(hideAccessories ? .snappy(duration: 0.2) : .smooth, value: hideAccessories)
+        .onExtraLongPress(limit: 0.5, pressed: $paused, extraLongPressed: $hideAccessories)
         .environment(\.paused, paused)
         .onAppear {
             selectedPage = story.pages.first
@@ -48,7 +59,7 @@ extension EnvironmentValues {
     @Entry var paused: Bool = false
 }
 
-extension StoryPageViewData: StoryTimeLineDisplayable {
+extension StoryPageViewData: StoryTimeLineDisplayable, Indexable {
     // ..
 }
 
