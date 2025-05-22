@@ -15,7 +15,7 @@ struct MainScreen: View {
             }
         }
         .fullScreenCover(item: $selectedStory) { story in
-            StoriesScreen()
+            StoriesScreen(story: story)
         }
     }
 }
