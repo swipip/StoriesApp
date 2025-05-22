@@ -10,11 +10,18 @@ struct StoryCellView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            Color
-                .gray
-                .overlay {
-                    Text("page \(selectedPage?.index ?? -1)")
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: .zero) {
+                    ForEach(story.pages) { page in
+                        StoryPageCellView(page: page)
+                            .containerRelativeFrame(.horizontal)
+                            .id(page)
+                    }
                 }
+                .scrollTargetLayout()
+            }
+            .scrollPosition(id: $selectedPage)
+            .scrollDisabled(true)
 
             InteractionsView()
                 .padding(.horizontal, 8)
