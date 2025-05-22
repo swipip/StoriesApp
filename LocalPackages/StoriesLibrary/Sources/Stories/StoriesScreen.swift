@@ -4,6 +4,8 @@ import StoriesCore
 
 public struct StoriesScreen: View {
 
+    @Environment(\.dismiss) private var dismissAction
+
     private let provider = StoriesRepository(service: .mock)
 
     public init() {
@@ -12,7 +14,7 @@ public struct StoriesScreen: View {
 
     public var body: some View {
         StoriesUI.StoriesScreen(provider: provider) {
-            // dismiss when presented
+            dismissAction()
         }
     }
 }

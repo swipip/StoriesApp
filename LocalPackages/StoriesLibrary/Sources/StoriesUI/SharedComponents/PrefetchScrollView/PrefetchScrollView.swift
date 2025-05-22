@@ -33,7 +33,7 @@ struct PrefetchScrollView<T: Identifiable & Hashable & Indexable & Sendable, Con
     }
 
     var body: some View {
-        ScrollView(axis) {
+        ScrollView(axis, showsIndicators: false) {
             layout {
                 ForEach(viewModel.model) { item in
                     content(item)
