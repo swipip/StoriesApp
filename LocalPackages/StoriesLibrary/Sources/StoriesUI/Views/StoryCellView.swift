@@ -12,6 +12,12 @@ struct StoryCellView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
         }
+        .overlay(alignment: .top) {
+            UserView(user: story.user) {
+                // handle dismiss and other interactions
+            }
+            .padding(8)
+        }
         .background(.black)
     }
 }
