@@ -22,6 +22,7 @@ struct Scroll3DView<T: Hashable & Identifiable & Sendable, Content: View>: View 
                                     perspective: 1)
                         }
                         .id(item)
+                        .environment(\.selected, selectedItem == item)
                 }
             }
             .scrollTargetLayout()

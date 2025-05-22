@@ -32,4 +32,8 @@ final class StoriesScreenViewModel: ObservableObject {
     init() {
         // ..
     }
+
+    func load() async {
+        selectedStory = stories.first
+    }
 }
