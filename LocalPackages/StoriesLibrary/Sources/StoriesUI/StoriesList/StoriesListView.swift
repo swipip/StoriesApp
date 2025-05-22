@@ -2,6 +2,7 @@ import SwiftUI
 
 package struct StoriesListView: View {
 
+    @StateObject private var assetLoader = AssetLoader()
     @StateObject private var viewModel: StoriesListViewModel
 
     private let handler: (_ storyId: UUID) -> Void
@@ -13,26 +14,26 @@ package struct StoriesListView: View {
 
     package var body: some View {
         PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: viewModel.stories, selectedItem: $viewModel.selectedStory) { item in
-            Circle()
-                .stroke(LinearGradient(colors: [.orange, .red, .pink], startPoint: .bottomLeading, endPoint: .topTrailing), lineWidth: 3)
-                .frame(height: 80)
-                .padding(3)
-                .overlay {
-                    Circle()
-                        .fill(.gray.opacity(0.4).gradient)
-                        .padding(6)
-                }
-                .onTapGesture {
-                    handler(item.id)
-                }
+            StoriesListCell(story: item) {
+                handler(item.id)
+            }
         } prefetch: { prefetchingRange in
-            // ..
+            await prefetchStories(prefetchingRange)
         }
+        .environmentObject(assetLoader)
         .task {
             await viewModel.load()
         }
     }
 
+    private func prefetchStories(_ prefetchItems: [StoryViewData]) async {
+        let assets = prefetchItems.flatMap(\.pages).map(\.asset)
+        do {
+            try await assetLoader.preloadAssets(for: assets)
+        } catch {
+            // ..
+        }
+    }
 }
 
 #Preview {
