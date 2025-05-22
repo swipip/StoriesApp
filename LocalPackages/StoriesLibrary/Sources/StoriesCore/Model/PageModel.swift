@@ -1,6 +1,6 @@
 import Foundation
 
-package struct PageModel: Sendable {
+package struct PageModel: Sendable, Codable {
     package let id: UUID
     package let index: Int
     package let asset: AssetModel

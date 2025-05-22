@@ -6,6 +6,7 @@ struct StoryCellView: View {
         case close
         case finishedWatching
         case requestPrevious
+        case likedButtonPressed(liked: Bool, page: StoryPageViewData)
     }
 
     let story: StoryViewData
@@ -17,10 +18,11 @@ struct StoryCellView: View {
     @State private var paused: Bool = false
     @State private var selectedPage: StoryPageViewData?
     @State private var like: Bool = false
+    @State private var stateFullPages: [StoryPageViewData] = []
 
     var body: some View {
         VStack(spacing: .zero) {
-            PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: story.pages, selectedItem: $selectedPage) { page in
+            PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: stateFullPages, selectedItem: $selectedPage) { page in
                 StoryPageCellView(page: page, onReady: {
                     if selectedPage == nil {
                         selectedPage = page
@@ -38,7 +40,7 @@ struct StoryCellView: View {
             }
             .scrollDisabled(true)
             .overlay {
-                PagesSelectionButtonsOverlayView(pages: story.pages, selectedPage: $selectedPage) { action in
+                PagesSelectionButtonsOverlayView(pages: stateFullPages, selectedPage: $selectedPage) { action in
                     guard !paused else { return }
                     switch action {
                         case .requestPrevious:
@@ -50,7 +52,7 @@ struct StoryCellView: View {
             }
             .overlay(alignment: .top) {
                 VStack(spacing: .zero) {
-                    StoriesVisualTimerView(selectedItem: $selectedPage, model: story.pages) {
+                    StoriesVisualTimerView(selectedItem: $selectedPage, model: stateFullPages) {
                         // ..
                     }
                     .padding(8)
@@ -62,7 +64,7 @@ struct StoryCellView: View {
                 .opacity(hideAccessories ? 0 : 1)
             }
 
-            InteractionsView(liked: $like)
+            InteractionsView(liked: Binding(get: { selectedPage?.liked ?? false }, set: { handleLike(liked: $0) }))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .opacity(hideAccessories ? 0 : 1)
@@ -70,7 +72,21 @@ struct StoryCellView: View {
         .background(.black)
         .animation(hideAccessories ? .snappy(duration: 0.2) : .smooth, value: hideAccessories)
         .onExtraLongPress(limit: 0.5, pressed: $paused, extraLongPressed: $hideAccessories)
+        .onAppear { stateFullPages = story.pages }
         .environment(\.paused, paused)
+    }
+
+    private func handleLike(liked: Bool) {
+        guard let selectedPage else { return }
+        updatePage(liked: liked)
+        handler(.likedButtonPressed(liked: liked, page: selectedPage))
+    }
+
+    private func updatePage(liked: Bool) {
+        guard let selectedPage else { return }
+        let updatingPage = StoryPageViewData(id: selectedPage.id, index: selectedPage.index, asset: selectedPage.asset, displayDuration: selectedPage.displayDuration, liked: liked)
+        self.selectedPage = updatingPage
+        stateFullPages[selectedPage.index] = updatingPage
     }
 
     private func prefetchAssets(for items: [StoryPageViewData]) async {

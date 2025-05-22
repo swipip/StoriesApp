@@ -39,6 +39,8 @@ package struct StoriesScreen: View {
                 }
             case .close:
                 onFinishedWatching()
+            case .likedButtonPressed(let liked, let page):
+                viewModel.setStoryLiked(liked, page: page)
         }
     }
 
@@ -72,6 +74,10 @@ extension StoryViewData: Indexable {
                 communication: "communication commerciale avec **Lululemon**",
                 postedSince: "22 h"
             )
+
+            func setStoryLiked(liked: Bool, storyId: UUID, pageId: UUID) async throws {
+                // ..
+            }
 
             func loadStories() async throws -> [StoryViewData] {
                 [

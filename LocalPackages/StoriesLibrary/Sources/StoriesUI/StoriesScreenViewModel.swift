@@ -38,4 +38,15 @@ final class StoriesScreenViewModel: ObservableObject {
         guard let currentIndex = selectedStory?.index else { return }
         selectedStory = stories[max(currentIndex - 1, 0)]
     }
+
+    func setStoryLiked(_ liked: Bool, page: StoryPageViewData) {
+        guard let selectedStory else { return }
+        Task {
+            do {
+                try await provider?.setStoryLiked(liked: liked, storyId: selectedStory.id, pageId: page.id)
+            } catch {
+                // ..
+            }
+        }
+    }
 }

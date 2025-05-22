@@ -4,6 +4,10 @@ import StoriesCore
 
 extension StoriesRepository: StoriesProvider {
 
+    package func setStoryLiked(liked: Bool, storyId: UUID, pageId: UUID) async throws {
+        try await updateStoryLiked(liked: liked, storyId: storyId, pageId: pageId)
+    }
+
     package func loadStories() async throws -> [StoryViewData] {
         try await getStories().map(\.toViewData)
     }

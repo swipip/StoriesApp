@@ -1,6 +1,6 @@
 import Foundation
 
-package struct AssetModel: Sendable {
+package struct AssetModel: Sendable, Codable {
     package let id: UUID
     package let mediaUrl: URL
 
