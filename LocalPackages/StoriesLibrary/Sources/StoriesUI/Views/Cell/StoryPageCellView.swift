@@ -2,17 +2,20 @@ import SwiftUI
 
 struct StoryPageCellView: View {
 
+    @EnvironmentObject private var assetLoader: AssetLoader
+    @State private var image: Image?
+
     let page: StoryPageViewData
 
     var body: some View {
         GeometryReader { geometryProxy in
-            AsyncImage(url: page.asset.mediaUrl) { image in
+            if let image {
                 image
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometryProxy.size.width, height: geometryProxy.size.height)
                     .clipped()
-            } placeholder: {
+            } else {
                 Rectangle()
                     .fill(.black.gradient)
                     .overlay {
@@ -25,6 +28,13 @@ struct StoryPageCellView: View {
         }
         .contentShape(Rectangle())
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .task {
+            do {
+                image = try await assetLoader.loadAsset(for: page.asset)
+            } catch {
+                // ..
+            }
+        }
         .id(page.id)
     }
 }

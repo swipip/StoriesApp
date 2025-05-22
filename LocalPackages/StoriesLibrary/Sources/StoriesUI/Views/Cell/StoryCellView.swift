@@ -4,6 +4,8 @@ struct StoryCellView: View {
 
     let story: StoryViewData
 
+    @EnvironmentObject private var assetLoader: AssetLoader
+
     @State private var hideAccessories: Bool = false
     @State private var paused: Bool = false
     @State private var selectedPage: StoryPageViewData?
@@ -20,7 +22,7 @@ struct StoryCellView: View {
                             .padding()
                     }
             } prefetch: { prefetchingItems in
-                // ..
+                await prefetchAssets(for: prefetchingItems)
             }
             .scrollDisabled(true)
 
@@ -59,6 +61,14 @@ struct StoryCellView: View {
         .environment(\.paused, paused)
         .onAppear {
             selectedPage = story.pages.first
+        }
+    }
+
+    private func prefetchAssets(for items: [StoryPageViewData]) async {
+        do {
+            try await assetLoader.preloadAssets(for: items.map(\.asset))
+        } catch {
+            // ..
         }
     }
 }
