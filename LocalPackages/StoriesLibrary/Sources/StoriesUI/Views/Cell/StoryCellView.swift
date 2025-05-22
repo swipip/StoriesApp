@@ -10,17 +10,18 @@ struct StoryCellView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: .zero) {
-                    ForEach(story.pages) { page in
-                        StoryPageCellView(page: page)
-                            .containerRelativeFrame(.horizontal)
-                            .id(page)
+            PrefetchScrollView(axis: .horizontal, policy: .aggressive, model: story.pages, selectedItem: $selectedPage) { page in
+                StoryPageCellView(page: page)
+                    .containerRelativeFrame(.horizontal)
+                    .id(page)
+                    .overlay(alignment: .bottom) {
+                        Text("\(page.index)")
+                            .font(.title2)
+                            .padding()
                     }
-                }
-                .scrollTargetLayout()
+            } prefetch: { prefetchingItems in
+                // ..
             }
-            .scrollPosition(id: $selectedPage)
             .scrollDisabled(true)
 
             InteractionsView()
