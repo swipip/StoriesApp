@@ -1,0 +1,51 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+
+# SwiftPM
+.swiftpm/
+.build/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# SPM
+Package.resolved
+
+# Fastlane
+fastlane/report.xml
+fastlane/screenshots
+fastlane/test_output
+
+# Xcode workspace settings
+xcuserdata/
+*.xcscmblueprint
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Archives
+*.xcarchive
+
+# Provisioning profiles
+*.mobileprovision
+
+# Logs
+*.log
+
+# Personal settings
+*.env
+*.local
+
+# Simulator devices
+CoreSimulator/
+
+# Secrets (if any)
+Secrets.swift
