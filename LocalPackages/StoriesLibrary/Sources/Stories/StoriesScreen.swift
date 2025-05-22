@@ -1,4 +1,5 @@
 import SwiftUI
+import StoriesUI
 
 public struct StoriesScreen: View {
 
@@ -7,8 +8,6 @@ public struct StoriesScreen: View {
     }
 
     public var body: some View {
-        VStack {
-            Color.blue
-        }
+        StoriesUI.StoriesScreen()
     }
 }

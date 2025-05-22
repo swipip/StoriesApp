@@ -22,6 +22,7 @@ struct Scroll3DView<T: Hashable & Identifiable & Sendable, Content: View>: View 
                                     perspective: 1)
                         }
                         .id(item)
+                        .environment(\.selected, selectedItem == item)
                 }
             }
             .scrollTargetLayout()
@@ -45,8 +46,4 @@ struct Scroll3DView<T: Hashable & Identifiable & Sendable, Content: View>: View 
             default: UnitPoint(x: 0.5, y: 0.5)
         }
     }
-}
-
-extension EnvironmentValues {
-    @Entry var paused: Bool = false
 }
