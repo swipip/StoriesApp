@@ -6,13 +6,13 @@ package struct StoriesScreen: View {
 
     package var body: some View {
         Scroll3DView(selectedItem: $viewModel.selectedStory, items: viewModel.stories) { story in
-            Color
-                .blue
+            StoryCellView(story: story)
                 .containerRelativeFrame(.horizontal)
                 .overlay {
                     Text("\(story.index)")
                 }
         }
+        .background(.black)
     }
 
 }
