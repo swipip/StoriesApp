@@ -25,6 +25,10 @@ package actor StoriesRepository {
     }
 
     package func updateStoryLiked(liked: Bool, storyId: UUID, pageId: UUID) async throws(RepositoryError) {
-        // ..
+        do {
+            try await service.setStoryPageLiked(storyId, pageId, liked)
+        } catch {
+            throw .serverError
+        }
     }
 }

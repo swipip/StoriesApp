@@ -5,6 +5,8 @@ package extension StoriesService {
     static var mock: StoriesService {
         StoriesService {
             await MockService.shared.loadStories()
+        } setStoryPageLiked: { storyId, pageId, liked in
+            try await MockService.shared.setStoryLiked(storyId: storyId, pageId: pageId, liked: liked)
         }
     }
 }
@@ -21,6 +23,37 @@ private actor MockService {
 
     private init() {
         // ..
+    }
+
+    func setStoryLiked(storyId: UUID, pageId: UUID, liked: Bool) async throws(ServiceError) -> StoryModel {
+        guard let story = cachedStories[storyId], let page = story.pages[pageId] else {
+            throw .serverError
+        }
+
+        let newPage = PageModel(
+            id: page.id,
+            index: page.index,
+            asset: page.asset,
+            displayDuration: page.displayDuration,
+            liked: liked,
+            viewed: page.viewed
+        )
+
+        var newPages = story.pages
+        newPages[page.index] = newPage
+
+        let newStory = StoryModel(
+            id: story.id,
+            user: story.user,
+            index: story.index,
+            viewed: story.viewed,
+            postedAt: story.postedAt,
+            pages: newPages
+        )
+
+        cachedStories[story.index] = newStory
+
+        return newStory
     }
 
     func loadStories() async -> [StoryModel] {
@@ -67,5 +100,17 @@ private actor MockService {
         print(url)
 
         return url
+    }
+}
+
+private extension [StoryModel] {
+    subscript(_ id: UUID) -> StoryModel? {
+        first(where: { $0.id == id })
+    }
+}
+
+private extension [PageModel] {
+    subscript(_ id: UUID) -> PageModel? {
+        first(where: { $0.id == id })
     }
 }
